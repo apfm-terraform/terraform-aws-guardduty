@@ -31,3 +31,22 @@ resource "aws_guardduty_organization_configuration" "this" {
     }
   }
 }
+
+##################################################
+# GuardDuty Organizations Features Configuration
+##################################################
+resource "aws_guardduty_organization_configuration_feature" "this" {
+  for_each    = var.organization_configuration_features
+  detector_id = var.guardduty_detector_id
+  name        = each.name
+  auto_enable = each.auto_enable
+
+  dynamic "additional_configuration" {
+    for_each = each.additional_configuration
+    content {
+      name        = additional_configuration.name
+      auto_enable = additional_configuration.auto_enable
+    }
+  }
+}
+

@@ -41,3 +41,14 @@ variable "auto_enable_organization_members" {
   type        = string
   default     = "NEW"
 }
+
+variable "organization_configuration_features" {
+  type = map(object({
+    name        = string
+    auto_enable = string # NEW | ALL | NONE
+    additional_configuration = list(object({
+      name        = string # EKS_ADDON_MANAGEMENT | ECS_FARGATE_AGENT_MANAGEMENT | EC2_AGENT_MANAGEMENT
+      auto_enable = string
+    }))
+  }))
+}
