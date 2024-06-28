@@ -43,6 +43,19 @@ variable "finding_publishing_frequency" {
   default     = "FIFTEEN_MINUTES"
 }
 
+variable "configuration_features" {
+  description = "Enable new GuardDuty protections only available as features"
+  type = map(object({
+    name   = string # S3_DATA_EVENTS | EKS_AUDIT_LOGS | EBS_MALWARE_PROTECTION | RDS_LOGIN_EVENTS | EKS_RUNTIME_MONITORING | LAMBDA_NETWORK_LOGS | RUNTIME_MONITORING
+    enable = bool
+    additional_configuration = list(object({ # EKS_ADDON_MANAGEMENT | ECS_FARGATE_AGENT_MANAGEMENT | EC2_AGENT_MANAGEMENT
+      name   = string
+      enable = bool
+    }))
+  }))
+  default = {}
+}
+
 
 ##################################################
 # GuardDuty Filter

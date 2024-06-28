@@ -44,6 +44,24 @@ resource "aws_guardduty_detector" "primary" {
 }
 
 ##################################################
+# GuardDuty Features Configuration
+##################################################
+resource "aws_guardduty_detector_feature" "this" {
+  for_each    = var.configuration_features
+  detector_id = aws_guardduty_detector.primary.id
+  name        = each.name
+  status      = each.status ? "ENABLED" : "DISABLED"
+
+  dynamic "additional_configuration" {
+    for_each = each.additional_configuration
+    content {
+      name   = additional_configuration.name
+      status = each.status ? "ENABLED" : "DISABLED"
+    }
+  }
+}
+
+##################################################
 # GuardDuty Filter
 ##################################################
 resource "aws_guardduty_filter" "this" {
