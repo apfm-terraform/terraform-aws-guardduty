@@ -43,12 +43,28 @@ variable "auto_enable_organization_members" {
 }
 
 variable "organization_configuration_features" {
+  description = "Enable new organization GuardDuty protections only available as features"
   type = map(object({
-    name        = string
-    auto_enable = string # NEW | ALL | NONE
-    additional_configuration = list(object({
-      name        = string # EKS_ADDON_MANAGEMENT | ECS_FARGATE_AGENT_MANAGEMENT | EC2_AGENT_MANAGEMENT
+    auto_enable = string
+    additional_configuration = map(object({
       auto_enable = string
     }))
   }))
+  validation {
+    condition     = alltrue([for k in var.organization_configuration_features : contains(["S3_DATA_EVENTS", "EKS_AUDIT_LOGS", "EBS_MALWARE_PROTECTION", "RDS_LOGIN_EVENTS", "EKS_RUNTIME_MONITORING", "LAMBDA_NETWORK_LOGS", "RUNTIME_MONITORING"], k)])
+    error_message = "The organization_configuration_features key must be one of: S3_DATA_EVENTS, EKS_AUDIT_LOGS, EBS_MALWARE_PROTECTION, RDS_LOGIN_EVENTS, EKS_RUNTIME_MONITORING, LAMBDA_NETWORK_LOGS, RUNTIME_MONITORING."
+  }
+  validation {
+    condition     = alltrue([for k, v in var.organization_configuration_features : contains(["ALL", "NONE", "NEW"], v.auto_enable)])
+    error_message = "The auto_enable value must be one of: ALL, NONE, NEW."
+  }
+  validation {
+    condition     = alltrue([for k, v in var.organization_configuration_features : [for a in v.additional_configuration : contains(["EKS_ADDON_MANAGEMENT", "ECS_FARGATE_AGENT_MANAGEMENT", "EC2_AGENT_MANAGEMENT"], a)]])
+    error_message = "The additional_configuration key must be one of: EKS_ADDON_MANAGEMENT, ECS_FARGATE_AGENT_MANAGEMENT, EC2_AGENT_MANAGEMENT."
+  }
+  validation {
+    condition     = alltrue([for k, v in var.organization_configuration_features : [for ak, av in v.additional_configuration : contains(["ALL", "NONE", "NEW"], av.auto_enable)]])
+    error_message = "The auto_enable value must be one of: ALL, NONE, NEW."
+  }
+  default = {}
 }
