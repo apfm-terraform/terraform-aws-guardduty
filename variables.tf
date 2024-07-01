@@ -46,13 +46,17 @@ variable "finding_publishing_frequency" {
 variable "configuration_features" {
   description = "Enable new GuardDuty protections only available as features"
   type = map(object({
-    name   = string # S3_DATA_EVENTS | EKS_AUDIT_LOGS | EBS_MALWARE_PROTECTION | RDS_LOGIN_EVENTS | EKS_RUNTIME_MONITORING | LAMBDA_NETWORK_LOGS | RUNTIME_MONITORING
-    enable = bool
-    additional_configuration = list(object({ # EKS_ADDON_MANAGEMENT | ECS_FARGATE_AGENT_MANAGEMENT | EC2_AGENT_MANAGEMENT
-      name   = string
-      enable = bool
-    }))
+    enabled                  = bool
+    additional_configuration = map(bool)
   }))
+  validation {
+    condition     = alltrue([for k in var.configuration_features : contains(["S3_DATA_EVENTS", "EKS_AUDIT_LOGS", "EBS_MALWARE_PROTECTION", "RDS_LOGIN_EVENTS", "EKS_RUNTIME_MONITORING", "LAMBDA_NETWORK_LOGS", "RUNTIME_MONITORING"], k)])
+    error_message = "The configuration_features key must be one of: S3_DATA_EVENTS, EKS_AUDIT_LOGS, EBS_MALWARE_PROTECTION, RDS_LOGIN_EVENTS, EKS_RUNTIME_MONITORING, LAMBDA_NETWORK_LOGS, RUNTIME_MONITORING."
+  }
+  validation {
+    condition     = alltrue([for k, v in var.configuration_features : [for a in v.additional_configuration : contains(["EKS_ADDON_MANAGEMENT", "ECS_FARGATE_AGENT_MANAGEMENT", "EC2_AGENT_MANAGEMENT"], a)]])
+    error_message = "The additional_configuration key must be one of: EKS_ADDON_MANAGEMENT, ECS_FARGATE_AGENT_MANAGEMENT, EC2_AGENT_MANAGEMENT."
+  }
   default = {}
 }
 
