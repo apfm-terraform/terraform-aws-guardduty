@@ -4,18 +4,15 @@
 
 locals {
   organization_configuration_features = {
-    "S3_DATA_EVENTS"         = { auto_enable = var.enable_s3_protection }
-    "EKS_AUDIT_LOGS"         = { auto_enable = var.enable_kubernetes_protection }
-    "EBS_MALWARE_PROTECTION" = { auto_enable = var.enable_malware_protection }
-    "RDS_LOGIN_EVENTS"       = { auto_enable = var.enable_rds_login_events }
-    "EKS_RUNTIME_MONITORING" = { auto_enable = var.enable_eks_runtime_monitoring
+    "RDS_LOGIN_EVENTS" = { auto_enable = var.auto_enable_rds_login_events }
+    "EKS_RUNTIME_MONITORING" = { auto_enable = var.auto_enable_eks_runtime_monitoring
       additional_configuration = {
-    "EKS_ADDON_MANAGEMENT" = { auto_enable = var.enable_eks_addon_management } } }
-    "RUNTIME_MONITORING" = { auto_enable = var.enable_runtime_monitoring
+    "EKS_ADDON_MANAGEMENT" = { auto_enable = var.auto_enable_eks_addon_management } } }
+    "RUNTIME_MONITORING" = { auto_enable = var.auto_enable_runtime_monitoring
       additional_configuration = {
-        "EKS_ADDON_MANAGEMENT" = { auto_enable = var.enable_eks_addon_management }
-        "EC2_AGENT_MANAGEMENT" = { auto_enable = var.enable_ec2_agent_management }
-    "ECS_FARGATE_AGENT_MANAGEMENT" = { auto_enable = var.enable_ecs_fargate_agent_management } } }
+        "EKS_ADDON_MANAGEMENT" = { auto_enable = var.auto_enable_eks_addon_management }
+        "EC2_AGENT_MANAGEMENT" = { auto_enable = var.auto_enable_ec2_agent_management }
+    "ECS_FARGATE_AGENT_MANAGEMENT" = { auto_enable = var.auto_enable_ecs_fargate_agent_management } } }
   }
 }
 
