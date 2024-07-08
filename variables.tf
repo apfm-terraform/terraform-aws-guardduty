@@ -31,6 +31,48 @@ variable "enable_malware_protection" {
   default     = true
 }
 
+variable "enable_rds_login_events" {
+  description = "Configure and enable RDS Login Events Monitoring. Defaults to `false`."
+  type        = bool
+  default     = false
+}
+
+variable "enable_lambda_network_logs" {
+  description = "Configure and enable Lambda Newtork Logs Monitoring. Defaults to `false`."
+  type        = bool
+  default     = false
+}
+
+variable "enable_eks_runtime_monitoring" {
+  description = "Configure and enable EKS Runtime Montoring. Specifying both EKS Runtime Monitoring and Runtime Monitoring will cause an error. Defaults to `false`."
+  type        = bool
+  default     = false
+}
+
+variable "enable_runtime_monitoring" {
+  description = "Configure and enable Runtime Monitoring. Specifying both EKS Runtime Monitoring and Runtime Monitoring  will cause an error. Defaults to `false`."
+  type        = bool
+  default     = false
+}
+
+variable "enable_eks_addon_management" {
+  description = "Configure and enable EKS Addon Mangement  additional configuration of EKS Runtime Monitoring/Runtime Monitoring. Defaults to `false`."
+  type        = bool
+  default     = false
+}
+
+variable "enable_ecs_fargate_agent_management" {
+  description = "Configure and enable ECS Fargate Agent Management additional configuration of Runtime Monitoring. Defaults to `false`."
+  type        = bool
+  default     = false
+}
+
+variable "enable_ec2_agent_management" {
+  description = "Configure and enable EC2 Agent Management additional configuration of Runtime Monitoring. Defaults to `false`."
+  type        = bool
+  default     = false
+}
+
 variable "enable_snapshot_retention" {
   description = "Enable EBS Snaptshot retention for 30 days, if any Findings exists. Defaults to `false`."
   type        = bool
@@ -41,23 +83,6 @@ variable "finding_publishing_frequency" {
   description = "Specifies the frequency of notifications sent for subsequent finding occurrences. If the detector is a GuardDuty member account, the value is determined by the GuardDuty primary account and cannot be modified. For standalone and GuardDuty primary accounts, it must be configured in Terraform to enable drift detection. Valid values for standalone and primary accounts: `FIFTEEN_MINUTES`, `ONE_HOUR`, `SIX_HOURS`. Defaults to `SIX_HOURS`."
   type        = string
   default     = "FIFTEEN_MINUTES"
-}
-
-variable "configuration_features" {
-  description = "Enable new GuardDuty protections only available as features"
-  type = map(object({
-    enabled                  = bool
-    additional_configuration = map(bool)
-  }))
-  validation {
-    condition     = alltrue([for k in var.configuration_features : contains(["S3_DATA_EVENTS", "EKS_AUDIT_LOGS", "EBS_MALWARE_PROTECTION", "RDS_LOGIN_EVENTS", "EKS_RUNTIME_MONITORING", "LAMBDA_NETWORK_LOGS", "RUNTIME_MONITORING"], k)])
-    error_message = "The configuration_features key must be one of: S3_DATA_EVENTS, EKS_AUDIT_LOGS, EBS_MALWARE_PROTECTION, RDS_LOGIN_EVENTS, EKS_RUNTIME_MONITORING, LAMBDA_NETWORK_LOGS, RUNTIME_MONITORING."
-  }
-  validation {
-    condition     = alltrue([for k, v in var.configuration_features : [for a in v.additional_configuration : contains(["EKS_ADDON_MANAGEMENT", "ECS_FARGATE_AGENT_MANAGEMENT", "EC2_AGENT_MANAGEMENT"], a)]])
-    error_message = "The additional_configuration key must be one of: EKS_ADDON_MANAGEMENT, ECS_FARGATE_AGENT_MANAGEMENT, EC2_AGENT_MANAGEMENT."
-  }
-  default = {}
 }
 
 
