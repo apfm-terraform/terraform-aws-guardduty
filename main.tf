@@ -3,6 +3,21 @@ locals {
   tags = {
     Repository = "https://github.com/aws-ia/terraform-aws-guardduty"
   }
+
+  configuration_features = {
+    "S3_DATA_EVENTS"         = { enabled = var.enable_s3_protection }
+    "EKS_AUDIT_LOGS"         = { enabled = var.enable_kubernetes_protection }
+    "EBS_MALWARE_PROTECTION" = { enabled = var.enable_malware_protection }
+    "RDS_LOGIN_EVENTS"       = { enabled = var.enable_rds_login_events }
+    "EKS_RUNTIME_MONITORING" = { enabled = var.enable_eks_runtime_monitoring
+      additional_configuration = {
+    "EKS_ADDON_MANAGEMENT" = { enabled = var.enable_eks_addon_management } } }
+    "RUNTIME_MONITORING" = { enabled = var.enable_runtime_monitoring
+      additional_configuration = {
+        "EKS_ADDON_MANAGEMENT" = { enabled = var.enable_eks_addon_management }
+        "EC2_AGENT_MANAGEMENT" = { enabled = var.enable_ec2_agent_management }
+    "ECS_FARGATE_AGENT_MANAGEMENT" = { enabled = var.enable_ecs_fargate_agent_management } } }
+  }
 }
 
 ##################################################
@@ -47,13 +62,13 @@ resource "aws_guardduty_detector" "primary" {
 # GuardDuty Features Configuration
 ##################################################
 resource "aws_guardduty_detector_feature" "this" {
-  for_each    = var.configuration_features
+  for_each    = { for k, v in local.configuration_features : k => v if v.enabled }
   detector_id = aws_guardduty_detector.primary.id
   name        = each.key
   status      = each.enabled ? "ENABLED" : "DISABLED"
 
   dynamic "additional_configuration" {
-    for_each = each.additional_configuration
+    for_each = { for k, v in each.additional_configuration : k => v if v.enabled }
     content {
       name   = additional_configuration.key
       status = each.enabled ? "ENABLED" : "DISABLED"
