@@ -62,13 +62,13 @@ resource "aws_guardduty_detector_feature" "this" {
   for_each    = { for k, v in local.configuration_features : k => v if v.enabled }
   detector_id = aws_guardduty_detector.primary.id
   name        = each.key
-  status      = each.enabled ? "ENABLED" : "DISABLED"
+  status      = each.value.enabled ? "ENABLED" : "DISABLED"
 
   dynamic "additional_configuration" {
-    for_each = { for k, v in each.additional_configuration : k => v if v.enabled }
+    for_each = { for k, v in each.value.additional_configuration : k => v if v.enabled }
     content {
-      name   = additional_configuration.key
-      status = each.enabled ? "ENABLED" : "DISABLED"
+      name   = each.key
+      status = each.value.enabled ? "ENABLED" : "DISABLED"
     }
   }
 }
