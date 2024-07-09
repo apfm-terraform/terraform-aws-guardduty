@@ -28,8 +28,8 @@ variable "auto_enable_rds_login_events" {
   description = "Auto-enable RDS login events monitoring for the member accounts within the organization."
   type        = string
   default     = null
-  validation {
-    condition     = contains(["ALL", "NONE", "NEW"], var.auto_enable_rds_login_events)
+   validation {
+    condition     = var.auto_enable_rds_login_events == null || contains(["ALL", "NONE", "NEW"], coalesce(var.auto_enable_rds_login_events, 0))
     error_message = "The auto_enable value must be one of: ALL, NONE, NEW."
   }
 }
@@ -39,7 +39,7 @@ variable "auto_enable_lambda_network_logs" {
   type        = string
   default     = null
   validation {
-    condition     = contains(["ALL", "NONE", "NEW"], var.auto_enable_lambda_network_logs)
+    condition     = var.auto_enable_lambda_network_logs == null || contains(["ALL", "NONE", "NEW"], coalesce(var.auto_enable_lambda_network_logs, 0))
     error_message = "The auto_enable value must be one of: ALL, NONE, NEW."
   }
 }
@@ -49,7 +49,7 @@ variable "auto_enable_eks_runtime_monitoring" {
   type        = string
   default     = null
   validation {
-    condition     = contains(["ALL", "NONE", "NEW"], var.auto_enable_eks_runtime_monitoring)
+    condition     = var.auto_enable_eks_runtime_monitoring == null || contains(["ALL", "NONE", "NEW"], coalesce(var.auto_enable_eks_runtime_monitoring, 0))
     error_message = "The auto_enable value must be one of: ALL, NONE, NEW."
   }
 }
@@ -59,7 +59,7 @@ variable "auto_enable_runtime_monitoring" {
   type        = string
   default     = null
   validation {
-    condition     = contains(["ALL", "NONE", "NEW"], var.enable_runtime_monitoring)
+    condition     = var.auto_enable_runtime_monitoring == null || contains(["ALL", "NONE", "NEW"], coalesce(var.auto_enable_runtime_monitoring, 0))
     error_message = "The auto_enable value must be one of: ALL, NONE, NEW."
   }
 }
@@ -69,7 +69,7 @@ variable "auto_enable_eks_addon_management" {
   type        = string
   default     = null
   validation {
-    condition     = contains(["ALL", "NONE", "NEW"], var.auto_enable_eks_addon_management)
+    condition     = var.auto_enable_eks_addon_management == null || contains(["ALL", "NONE", "NEW"], coalesce(var.auto_enable_eks_addon_management, 0))
     error_message = "The auto_enable value must be one of: ALL, NONE, NEW."
   }
 }
@@ -79,7 +79,7 @@ variable "auto_enable_ecs_fargate_agent_management" {
   type        = string
   default     = null
   validation {
-    condition     = contains(["ALL", "NONE", "NEW"], var.auto_enable_ecs_fargate_agent_management)
+    condition     = var.auto_enable_ecs_fargate_agent_management == null || contains(["ALL", "NONE", "NEW"], coalesce(var.auto_enable_ecs_fargate_agent_management, 0))
     error_message = "The auto_enable value must be one of: ALL, NONE, NEW."
   }
 }
@@ -89,7 +89,7 @@ variable "auto_enable_ec2_agent_management" {
   type        = string
   default     = null
   validation {
-    condition     = contains(["ALL", "NONE", "NEW"], var.auto_enable_ec2_agent_management)
+    condition     = var.auto_enable_ec2_agent_management == null || contains(["ALL", "NONE", "NEW"], coalesce(var.auto_enable_ec2_agent_management, 0))
     error_message = "The auto_enable value must be one of: ALL, NONE, NEW."
   }
 }

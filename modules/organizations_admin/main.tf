@@ -51,17 +51,16 @@ resource "aws_guardduty_organization_configuration" "this" {
 # GuardDuty Organizations Features Configuration
 ##################################################
 resource "aws_guardduty_organization_configuration_feature" "this" {
-  for_each    = { for k, v in local.organization_configuration_features : k => v if v != null }
+  for_each    = { for k, v in local.organization_configuration_features : k => v if v.auto_enable != null }
   detector_id = var.guardduty_detector_id
   name        = each.key
-  auto_enable = each.auto_enable
+  auto_enable = each.value.auto_enable
 
   dynamic "additional_configuration" {
-    for_each = { for k, v in each.additional_configuration : k => v if v != null }
+    for_each = { for k, v in each.value.additional_configuration : k => v if v.auto_enable != null }
     content {
       name        = additional_configuration.key
-      auto_enable = additional_configuration.auto_enable
+      auto_enable = additional_configuration.value.auto_enable
     }
   }
 }
-
