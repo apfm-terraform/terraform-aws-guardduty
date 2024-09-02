@@ -224,8 +224,6 @@ resource "aws_kms_key" "replica_key" {
   #checkov:skip=CKV2_AWS_64:TODO fix KMS Policy
   count = var.ipset_config != null || var.threatintelset_config != null || var.publish_to_s3 ? 1 : 0
 
-  provider = aws.replica
-
   description             = "AWS KMS Key for Amazon GuardDuty Replica Bucket encryption."
   deletion_window_in_days = 7
   is_enabled              = true
@@ -352,18 +350,8 @@ module "s3_bucket" {
     module.replica_bucket
   ]
 }
-
-provider "aws" {
-  region = try(var.replica_region, data.aws_region.current)
-  alias  = "replica"
-}
-
 module "replica_bucket" {
   count = var.ipset_config != null || var.threatintelset_config != null || var.publish_to_s3 ? 1 : 0
-
-  providers = {
-    aws = aws.replica
-  }
 
   source  = "terraform-aws-modules/s3-bucket/aws"
   version = "3.14.0"
